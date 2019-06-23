@@ -2,31 +2,35 @@ package com.zhangche.kaoqin;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.res.ResourcesCompat;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
-public class DayDataLinerLaylout extends LinearLayout {
+public class DayDataLinerLayout extends LinearLayout {
 
     TextView date,workOn,workOff;
-    public DayDataLinerLaylout(Context context, int time, Date workOnTime, Date workOffTime) {
+    public DayDataLinerLayout(Context context, int time, Date workOnTime, Date workOffTime) {
         super(context);
-//        date = new Button(context);
-//        workOn = new Button(context);
-//        workOff = new Button(context);
         date = new TextView(context);
         workOn = new TextView(context);
         workOff = new TextView(context);
         TextView textView = new TextView(context);
 
         setOrientation(HORIZONTAL);
+
+        setShowDividers(SHOW_DIVIDER_MIDDLE);
+        setDividerDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.black_line,null));
         addView(date);
         addView(workOn);
         addView(textView);
@@ -38,7 +42,7 @@ public class DayDataLinerLaylout extends LinearLayout {
         date.setLayoutParams(dateLayoutParams);
         date.setText(String.valueOf(time));
         date.setGravity(Gravity.CENTER);
-        date.setBackgroundColor(Color.WHITE);
+//        date.setBackgroundColor(Color.WHITE);
 
 
         LinearLayout.LayoutParams workOnLayoutParams = (LayoutParams) workOn.getLayoutParams();
@@ -47,7 +51,7 @@ public class DayDataLinerLaylout extends LinearLayout {
         workOn.setLayoutParams(workOnLayoutParams);
         workOn.setText(getFormatTime(workOnTime,true));
         workOn.setGravity(Gravity.CENTER);
-        workOn.setBackgroundColor(Color.WHITE);
+//        workOn.setBackgroundColor(Color.WHITE);
 
         LinearLayout.LayoutParams textLayoutParams = (LayoutParams) textView.getLayoutParams();
         textLayoutParams.weight = 1;
@@ -63,7 +67,7 @@ public class DayDataLinerLaylout extends LinearLayout {
         workOff.setLayoutParams(workOffLayoutParams);
         workOff.setText(getFormatTime(workOffTime,false));
         workOff.setGravity(Gravity.CENTER);
-        workOff.setBackgroundColor(Color.WHITE);
+//        workOff.setBackgroundColor(Color.WHITE);
 
     }
 

@@ -6,20 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:divider="#000000"
-    android:id="@+id/main_layout">
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:showDividers="middle"
-        android:id="@+id/child_layout">
+        android:layout_height="280dp"
+        android:maxHeight="280dp"
+        android:scrollbars="vertical"
+        android:fadingEdge="vertical">
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            android:orientation="vertical"
+            android:divider="#000000"
+            android:showDividers="middle"
+            android:scrollbars="vertical"
 
-</LinearLayout>
+            android:id="@+id/main_layout">
+
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

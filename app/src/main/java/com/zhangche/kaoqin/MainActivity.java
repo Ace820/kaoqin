@@ -17,8 +17,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         LinearLayout mainLayout = findViewById(R.id.main_layout);
+
+
         for(int i = 1;i<31;i++) {
-            mainLayout.addView(new DayDataLinerLaylout(MainActivity.this,i,null,null));
+            mainLayout.addView(new DayDataLinerLayout(MainActivity.this,i,null,null));
         }
     }
 }
