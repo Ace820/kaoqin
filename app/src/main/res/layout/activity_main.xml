@@ -4,25 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <ScrollView
+    <TextView
+        android:id="@+id/date_info"
         android:layout_width="match_parent"
-        android:layout_height="280dp"
+        android:layout_height="wrap_content"
+        android:textSize="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="290dp"
+        android:fadingEdge="vertical"
         android:maxHeight="280dp"
         android:scrollbars="vertical"
-        android:fadingEdge="vertical">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date_info">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="280dp"
-            android:orientation="vertical"
-            android:divider="#000000"
-            android:showDividers="middle"
-            android:scrollbars="vertical"
+    <LinearLayout
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="290dp"
+        android:divider="@drawable/long_black"
+        android:orientation="vertical"
+        android:scrollbars="vertical"
 
-            android:id="@+id/main_layout">
+        android:showDividers="middle"
+        app:layout_constraintEnd_toEndOf="parent"
+        >
 
-        </LinearLayout>
-    </ScrollView>
+    </LinearLayout>
+</ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
