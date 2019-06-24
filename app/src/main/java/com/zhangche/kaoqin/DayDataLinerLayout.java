@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,17 +22,31 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import static android.content.ContentValues.TAG;
+
 public class DayDataLinerLayout extends LinearLayout {
 
     Context mContext;
     TextView date,workOn,workOff;
-    public DayDataLinerLayout(Context context, String time, Date workOnTime, Date workOffTime) {
+    DataBaseFunc dataBaseFunc;
+    String thisDay;
+    String mWorkOnTime = "08:30";
+    String mWorkOffTime = "??:??";
+    public DayDataLinerLayout(Context context, String time) {
         super(context);
         mContext = context;
+        dataBaseFunc = new DataBaseFunc(mContext);
         date = new TextView(context);
         workOn = new TextView(context);
         workOff = new TextView(context);
         TextView textView = new TextView(context);
+
+        thisDay = time;
+        if(dataBaseFunc.isDateSeted(thisDay)) {
+            String[] result = dataBaseFunc.getData(thisDay);
+            mWorkOnTime = result[0];
+            mWorkOffTime = result[1];
+        }
 
         setOrientation(HORIZONTAL);
 
@@ -55,7 +70,7 @@ public class DayDataLinerLayout extends LinearLayout {
         workOnLayoutParams.weight = 2;
         workOnLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
         workOn.setLayoutParams(workOnLayoutParams);
-        workOn.setText(getFormatTime(workOnTime,true));
+        workOn.setText(mWorkOnTime);
         workOn.setOnClickListener(new dateClickListener(false));
         workOn.setGravity(Gravity.CENTER);
 //        workOn.setBackgroundColor(Color.WHITE);
@@ -72,7 +87,7 @@ public class DayDataLinerLayout extends LinearLayout {
         workOffLayoutParams.weight = 2;
         workOffLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
         workOff.setLayoutParams(workOffLayoutParams);
-        workOff.setText(getFormatTime(workOffTime,false));
+        workOff.setText(mWorkOffTime);
         workOff.setOnClickListener(new dateClickListener(true));
         workOff.setGravity(Gravity.CENTER_VERTICAL|Gravity.LEFT);
 //        workOff.setBackgroundColor(Color.WHITE);
@@ -94,10 +109,16 @@ public class DayDataLinerLayout extends LinearLayout {
             new TimePickerDialog(mContext, AlertDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                    if (isWorkOff)
-                        workOff.setText(hour + ":" + minute);
-                    else
-                        workOn.setText(hour + ":" + minute);
+                    if (!isWorkOff) {
+                        mWorkOnTime = hour + ":" + minute;
+                        workOn.setText(mWorkOnTime);
+                    } else {
+                        mWorkOffTime = hour + ":" + minute;
+                        Log.d(TAG,mWorkOffTime);
+                        workOff.setText(mWorkOffTime);
+                    }
+                    Log.d(TAG,mWorkOffTime);
+                    dataBaseFunc.insert(thisDay,mWorkOnTime,mWorkOffTime);
                 }
             },hourOfDay,minuteOfHour,true).show();
 
@@ -111,6 +132,7 @@ public class DayDataLinerLayout extends LinearLayout {
         sdf.format(calendar.getTime());
         return sdf.format(calendar.getTime());
     }
+
     private String getWeekDays(String date) {
         String[] weekDayName = {"日","一","二","三","四","五","六"};
         Calendar calendar = Calendar.getInstance(Locale.CHINA);
@@ -123,6 +145,5 @@ public class DayDataLinerLayout extends LinearLayout {
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) -1;
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
         return dayOfMonth + "  (" + weekDayName[dayOfWeek] + ")";
-
     }
 }

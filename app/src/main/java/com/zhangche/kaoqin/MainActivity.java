@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         monthInfo.setText(mYear + "年" + mMonth + "月");
         mainLayout.removeAllViews();
         for(int i = 0;i<getMonthDays(mYear,mMonth);i++) {
-            mainLayout.addView(new DayDataLinerLayout(MainActivity.this,formatTime(mYear,mMonth,i + 1),null,null));
+            mainLayout.addView(new DayDataLinerLayout(MainActivity.this,formatTime(mYear,mMonth,i + 1)));
         }
 
     }
