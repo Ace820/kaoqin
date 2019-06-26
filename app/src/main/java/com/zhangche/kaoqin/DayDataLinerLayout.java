@@ -168,14 +168,6 @@ public class DayDataLinerLayout extends LinearLayout {
 
         }
     }
-    private String getFormatTime(Date time,boolean isMorning) {
-        if (time == null)
-            return isMorning ? "8:30" : "??:??";
-        Calendar calendar = Calendar.getInstance(Locale.CHINA);
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm", Locale.CHINA);
-        sdf.format(calendar.getTime());
-        return sdf.format(calendar.getTime());
-    }
 
     private void initWeekDays(String date) {
         Calendar calendar = Calendar.getInstance(Locale.CHINA);
@@ -206,6 +198,8 @@ public class DayDataLinerLayout extends LinearLayout {
 
     private String formatInt(int number) {
         if (number < 10)  {
+            if (number < 0)
+                return String.valueOf(number);
             return "0" + number;
         }
         return String.valueOf(number);
