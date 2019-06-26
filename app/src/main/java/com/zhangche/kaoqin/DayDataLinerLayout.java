@@ -145,6 +145,9 @@ public class DayDataLinerLayout extends LinearLayout {
         }
         @Override
         public void onClick(View v) {
+            Calendar calendar = Calendar.getInstance(Locale.CHINA);
+            hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+            minuteOfHour = calendar.get(Calendar.MINUTE);
             new TimePickerDialog(mContext, AlertDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(TimePicker timePicker, int hour, int minute) {
