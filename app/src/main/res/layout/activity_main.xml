@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/main_layout"
     tools:context=".MainActivity">
 
     <TextView
@@ -15,6 +16,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/date_info"
+        android:id="@+id/list_title"/>
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -24,10 +31,10 @@
         android:maxHeight="280dp"
         android:scrollbars="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/date_info">
+        app:layout_constraintTop_toBottomOf="@+id/list_title">
 
     <LinearLayout
-        android:id="@+id/main_layout"
+        android:id="@+id/date_list_layout"
         android:layout_width="match_parent"
         android:layout_height="290dp"
         android:divider="@drawable/long_black"

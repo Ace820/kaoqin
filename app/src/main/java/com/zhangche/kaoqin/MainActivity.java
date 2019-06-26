@@ -32,11 +32,13 @@ public class MainActivity extends AppCompatActivity {
     int tempMonth = mMonth;
     TextView monthInfo;
     LinearLayout mainLayout;
+    LinearLayout list_title;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mainLayout = findViewById(R.id.main_layout);
+        mainLayout = findViewById(R.id.date_list_layout);
+        list_title = findViewById(R.id.list_title);
 
         monthInfo = findViewById(R.id.date_info);
         monthInfo.setText(getMonth(null));
@@ -52,9 +54,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void reDrawViews() {
         monthInfo.setText(mYear + "年" + mMonth + "月");
+        list_title.removeAllViews();
+        list_title.addView(new DayDataLinerLayout(MainActivity.this,"20190620",true));
         mainLayout.removeAllViews();
         for(int i = 0;i<getMonthDays(mYear,mMonth);i++) {
-            mainLayout.addView(new DayDataLinerLayout(MainActivity.this,formatTime(mYear,mMonth,i + 1)));
+            mainLayout.addView(new DayDataLinerLayout(MainActivity.this,formatTime(mYear,mMonth,i + 1),false));
         }
 
     }

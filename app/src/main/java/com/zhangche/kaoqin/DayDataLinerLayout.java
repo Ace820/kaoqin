@@ -27,12 +27,25 @@ import static android.content.ContentValues.TAG;
 public class DayDataLinerLayout extends LinearLayout {
 
     Context mContext;
-    TextView date,workOn,workOff;
+    TextView date,workOn,workOff,workTime;
     DataBaseFunc dataBaseFunc;
     String thisDay;
     String mWorkOnTime = "08:30";
     String mWorkOffTime = "??:??";
-    public DayDataLinerLayout(Context context, String time) {
+    String mOverWorkTime = "??:??";
+    int dayOfWeek = 0;
+    int dayOfMonth = 0;
+    int[] styleColor = {
+      0xFFFF7F00, //orange
+      0xFFFFFF00, //yellow
+      0xFF00FF00, //green
+      0xFF00FFFF, //cyan
+      0xFF6495ED, //blue
+      0xFF8B00FF, //purple
+      0xFFFF0000, //red
+    };
+    String[] weekDayName = {"日","一","二","三","四","五","六"};
+    public DayDataLinerLayout(Context context, String time,boolean isTitle) {
         super(context);
         mContext = context;
         dataBaseFunc = new DataBaseFunc(mContext);
@@ -40,15 +53,19 @@ public class DayDataLinerLayout extends LinearLayout {
         workOn = new TextView(context);
         workOff = new TextView(context);
         TextView textView = new TextView(context);
+        workTime = new TextView(context);
 
         thisDay = time;
+        initWeekDays(thisDay);
         if(dataBaseFunc.isDateSeted(thisDay)) {
             String[] result = dataBaseFunc.getData(thisDay);
             mWorkOnTime = result[0];
             mWorkOffTime = result[1];
         }
+        calcOverWorkTime();
 
         setOrientation(HORIZONTAL);
+        setBackgroundColor(styleColor[dayOfWeek]);
 
 //        setShowDividers(SHOW_DIVIDER_MIDDLE);
 //        setDividerDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.black_line,null));
@@ -56,14 +73,15 @@ public class DayDataLinerLayout extends LinearLayout {
         addView(workOn);
         addView(textView);
         addView(workOff);
+        addView(workTime);
 
         LinearLayout.LayoutParams dateLayoutParams = (LayoutParams) date.getLayoutParams();
         dateLayoutParams.weight = 2;
         dateLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
         date.setLayoutParams(dateLayoutParams);
-        date.setText(getWeekDays(time));
+        date.setText(formatInt(dayOfMonth) + "(" + weekDayName[dayOfWeek] + ")");
         date.setGravity(Gravity.CENTER_VERTICAL|Gravity.RIGHT);
-//        date.setBackgroundColor(Color.WHITE);
+//        date.setBackgroundColor(styleColor[dayOfWeek]);
 
 
         LinearLayout.LayoutParams workOnLayoutParams = (LayoutParams) workOn.getLayoutParams();
@@ -73,7 +91,7 @@ public class DayDataLinerLayout extends LinearLayout {
         workOn.setText(mWorkOnTime);
         workOn.setOnClickListener(new dateClickListener(false));
         workOn.setGravity(Gravity.CENTER);
-//        workOn.setBackgroundColor(Color.WHITE);
+//        workOn.setBackgroundColor(styleColor[dayOfWeek]);
 
         LinearLayout.LayoutParams textLayoutParams = (LayoutParams) textView.getLayoutParams();
         textLayoutParams.weight = 1;
@@ -82,6 +100,7 @@ public class DayDataLinerLayout extends LinearLayout {
         textView.setText("-");
         textView.setTextSize(30);
         textView.setGravity(Gravity.CENTER_VERTICAL|Gravity.LEFT);
+//        textView.setBackgroundColor(styleColor[dayOfWeek]);
 
         LinearLayout.LayoutParams workOffLayoutParams = (LayoutParams) workOff.getLayoutParams();
         workOffLayoutParams.weight = 2;
@@ -90,8 +109,28 @@ public class DayDataLinerLayout extends LinearLayout {
         workOff.setText(mWorkOffTime);
         workOff.setOnClickListener(new dateClickListener(true));
         workOff.setGravity(Gravity.CENTER_VERTICAL|Gravity.LEFT);
-//        workOff.setBackgroundColor(Color.WHITE);
 
+        LinearLayout.LayoutParams workTimeLayoutParams = (LayoutParams) workTime.getLayoutParams();
+        workTimeLayoutParams.weight = 2;
+        workTimeLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        workTime.setLayoutParams(workOffLayoutParams);
+        workTime.setText(mOverWorkTime);
+        workTime.setGravity(Gravity.CENTER_VERTICAL|Gravity.LEFT);
+
+        if (isTitle) {
+            setBackgroundColor(Color.BLACK);
+            date.setText(" 日期  ");
+            date.setTextColor(Color.WHITE);
+            workOn.setText(" 上班 ");
+            workOn.setTextColor(Color.WHITE);
+            workOn.setOnClickListener(null);
+            workOff.setText("下班");
+            workOff.setTextColor(Color.WHITE);
+            workOff.setOnClickListener(null);
+            workTime.setText("加班");
+            workTime.setTextColor(Color.WHITE);
+            textView.setTextColor(Color.WHITE);
+        }
     }
 
     class dateClickListener implements View.OnClickListener {
@@ -110,14 +149,16 @@ public class DayDataLinerLayout extends LinearLayout {
                 @Override
                 public void onTimeSet(TimePicker timePicker, int hour, int minute) {
                     if (!isWorkOff) {
-                        mWorkOnTime = hour + ":" + minute;
+                        mWorkOnTime = formatInt(hour) + ":" + formatInt(minute);
                         workOn.setText(mWorkOnTime);
                     } else {
-                        mWorkOffTime = hour + ":" + minute;
+                        mWorkOffTime = formatInt(hour) + ":" + formatInt(minute);
                         Log.d(TAG,mWorkOffTime);
                         workOff.setText(mWorkOffTime);
                     }
                     Log.d(TAG,mWorkOffTime);
+                    calcOverWorkTime();
+                    workTime.setText(mOverWorkTime);
                     dataBaseFunc.insert(thisDay,mWorkOnTime,mWorkOffTime);
                 }
             },hourOfDay,minuteOfHour,true).show();
@@ -133,8 +174,7 @@ public class DayDataLinerLayout extends LinearLayout {
         return sdf.format(calendar.getTime());
     }
 
-    private String getWeekDays(String date) {
-        String[] weekDayName = {"日","一","二","三","四","五","六"};
+    private void initWeekDays(String date) {
         Calendar calendar = Calendar.getInstance(Locale.CHINA);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
         try {
@@ -142,8 +182,29 @@ public class DayDataLinerLayout extends LinearLayout {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) -1;
-        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-        return dayOfMonth + "  (" + weekDayName[dayOfWeek] + ")";
+        dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) -1;
+        dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+    private void calcOverWorkTime() {
+        if (mWorkOffTime.equals("??:??")) {
+            return;
+        }
+        String[] temp = mWorkOnTime.split(":");
+        int workOnTime = Integer.parseInt(temp[0]) * 60 + Integer.parseInt(temp[1]);
+        temp = mWorkOffTime.split(":");
+        int workOffTime = Integer.parseInt(temp[0]) * 60 + Integer.parseInt(temp[1]);
+        int workTime = workOffTime - workOnTime;
+        if (dayOfWeek == 0 || dayOfWeek == 6) {
+            workTime += 9 * 60;
+        }
+        mOverWorkTime = formatInt(workTime / 60 - 9) + ":" + formatInt(workTime % 60);
+    }
+
+    private String formatInt(int number) {
+        if (number < 10)  {
+            return "0" + number;
+        }
+        return String.valueOf(number);
     }
 }
