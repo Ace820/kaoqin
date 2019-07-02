@@ -1,5 +1,6 @@
 package com.zhangche.kaoqin;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -7,6 +8,8 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Layout;
 import android.util.Log;
 import android.view.Gravity;
@@ -20,6 +23,7 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.regex.Matcher;
 
@@ -33,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     TextView monthInfo;
     LinearLayout mainLayout;
     LinearLayout list_title;
+    GetBusGpsData getBusGpsData;
+    Handler handler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +56,41 @@ public class MainActivity extends AppCompatActivity {
         });
 
         reDrawViews();
+        final TextView textView = findViewById(R.id.info_show);
+        handler = new Handler() {
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
+                int[] busData = (int[]) msg.obj;
+                textView.setText("到站时间：" + busData[0] + "分钟\n");
+                textView.append("当前方向：" + (getBusGpsData.isGoHome ? "回家" :"去公司") + "\n");
+                textView.append("距离本站站点：" + busData[1] + "站\n");
+                textView.append("距离本站距离：" + busData[2] + "米\n");
+                textView.append("当前站点：" + getBusGpsData.getCurrentStation() + "\n");
+            }
+        };
+        getBusGpsData = new GetBusGpsData(handler);
+        GregorianCalendar ca = new GregorianCalendar();
+        getBusGpsData.isGoHome = (ca.get(GregorianCalendar.AM_PM) == 1);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getBusGpsData.isGoHome = !getBusGpsData.isGoHome;
+                textView.setText("当前方向：" + (getBusGpsData.isGoHome ? "回家" :"去公司") + "\n");
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getBusGpsData.run();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        getBusGpsData.need_exit = true;
     }
 
     private void reDrawViews() {
