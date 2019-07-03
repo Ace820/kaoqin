@@ -31,7 +31,7 @@ public class DataBaseFunc extends SQLiteOpenHelper {
     Context context;
 
     public DataBaseFunc(Context contexts) {
-        super(contexts,DATABASENAME,null,DATABASEVERSION);
+        super(contexts, DATABASENAME, null, DATABASEVERSION);
         context = contexts;
         dataBase = getWritableDatabase();
     }
@@ -50,28 +50,29 @@ public class DataBaseFunc extends SQLiteOpenHelper {
     }
 
     public String[] getData(String date) {
-        String[] result = {"",""};
+        String[] result = {"", ""};
         String sql = "select * from main where date is '" + date + "'";
-        Cursor cursor = dataBase.rawQuery(sql,null);
+        Cursor cursor = dataBase.rawQuery(sql, null);
         cursor.moveToFirst();
         result[0] = cursor.getString(1);
         result[1] = cursor.getString(2);
         cursor.close();
         return result;
     }
-    public void insert(String date,String workOnTime, String workOffTime) {
+
+    public void insert(String date, String workOnTime, String workOffTime) {
         String sql;
         if (isDateSeted(date))
-            sql = "update main set workOnTime='" +workOnTime+ "',workOffTime='" + workOffTime + "' where date is '" + date +"'";
+            sql = "update main set workOnTime='" + workOnTime + "',workOffTime='" + workOffTime + "' where date is '" + date + "'";
         else
             sql = "insert into main values ('" + date + "','" + workOnTime + "','" + workOffTime + "')";
-        Log.d(TAG,sql);
+        Log.d(TAG, sql);
         dataBase.execSQL(sql);
     }
 
     public boolean isDateSeted(String date) {
         String sql = "select * from main where date is '" + date + "'";
-        Cursor cursor = dataBase.rawQuery(sql,null);
+        Cursor cursor = dataBase.rawQuery(sql, null);
         boolean exist = (cursor.getCount() != 0);
         cursor.close();
         return exist;
