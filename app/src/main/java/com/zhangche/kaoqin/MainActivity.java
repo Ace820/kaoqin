@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 textView.append("车辆即将到达：" + getBusGpsData.bus.busStation.name + "\n");
                 textView.append("距离本站距离：" + getBusGpsData.bus.distance + "米\n");
                 textView.append("我在：" + getBusGpsData.bus.myStation.name + "\n");
+                textView.append("我在：" + getBusGpsData.bus.myStation.name + "\n");
 //                textView.append("location:" + getBusGpsData.latitude + "\n");
 //                textView.append("location:" + getBusGpsData.longitude + "\n");
             }
